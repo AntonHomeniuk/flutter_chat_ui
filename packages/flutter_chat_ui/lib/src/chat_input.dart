@@ -20,6 +20,8 @@ class ChatInput extends StatefulWidget {
   final double? gap;
   final InputBorder? inputBorder;
   final bool? filled;
+  final bool? bottomSafeArea;
+  final String? inputHint;
 
   const ChatInput({
     super.key,
@@ -29,7 +31,7 @@ class ChatInput extends StatefulWidget {
     this.bottom = 0,
     this.sigmaX = 20,
     this.sigmaY = 20,
-    this.padding = const EdgeInsets.all(8.0),
+    this.padding = const EdgeInsets.all(16),
     this.attachmentIcon = const Icon(Icons.attachment),
     this.sendIcon = const Icon(Icons.send),
     this.gap = 8,
@@ -38,6 +40,8 @@ class ChatInput extends StatefulWidget {
       borderRadius: BorderRadius.all(Radius.circular(24)),
     ),
     this.filled = true,
+    this.bottomSafeArea,
+    this.inputHint,
   });
 
   @override
@@ -62,6 +66,8 @@ class _ChatInputState extends State<ChatInput> {
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor =
+    context.select((ChatTheme theme) => theme.backgroundColor);
     final inputTheme = context.select((ChatTheme theme) => theme.inputTheme);
 
     final onAttachmentTap = context.read<OnAttachmentTapCallback?>();
@@ -80,48 +86,43 @@ class _ChatInputState extends State<ChatInput> {
           ),
           child: Container(
             key: _inputKey,
-            color: inputTheme.backgroundColor,
-            child: Padding(
-              // TODO: remove padding if it's 0
-              padding: widget.padding ?? EdgeInsets.zero,
-              child: Row(
-                children: [
-                  widget.attachmentIcon != null
-                      ? IconButton(
-                          icon: widget.attachmentIcon!,
-                          color: inputTheme.hintStyle?.color,
-                          onPressed: onAttachmentTap,
-                        )
-                      : const SizedBox.shrink(),
-                  SizedBox(width: widget.gap),
-                  Expanded(
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        hintText: 'Type a message',
-                        hintStyle: inputTheme.hintStyle,
-                        border: widget.inputBorder,
-                        filled: widget.filled,
-                        fillColor: inputTheme.textFieldColor,
-                        hoverColor: Colors.transparent,
+            color: backgroundColor.withOpacity(0.8),
+            child: SafeArea(
+              top: false,
+              bottom: widget.bottomSafeArea == true,
+              child: Padding(
+                // TODO: remove padding if it's 0
+                padding: widget.padding ?? EdgeInsets.zero,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          hintText: widget.inputHint ?? 'Message...',
+                          hintStyle: inputTheme.hintStyle,
+                          border: widget.inputBorder,
+                          filled: widget.filled,
+                          fillColor: inputTheme.backgroundColor,
+                          hoverColor: Colors.transparent,
+                        ),
+                        style: inputTheme.textStyle,
+                        onSubmitted: _handleSubmitted,
+                        textInputAction: TextInputAction.send,
                       ),
-                      style: inputTheme.textStyle,
-                      onSubmitted: _handleSubmitted,
-                      textInputAction: TextInputAction.send,
                     ),
-                  ),
-                  SizedBox(width: widget.gap),
-                  widget.sendIcon != null
-                      ? IconButton(
-                          icon: widget.sendIcon!,
-                          color: inputTheme.hintStyle?.color,
-                          onPressed: () =>
-                              _handleSubmitted(_textController.text),
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              ),
-            ),
+                    SizedBox(width: widget.gap),
+                    widget.sendIcon != null
+                        ? IconButton(
+                      icon: widget.sendIcon!,
+                      color: inputTheme.hintStyle?.color,
+                      onPressed: () =>
+                          _handleSubmitted(_textController.text),
+                    )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),),
           ),
         ),
       ),
@@ -130,7 +131,7 @@ class _ChatInputState extends State<ChatInput> {
 
   void _updateInputHeight() {
     final renderBox =
-        _inputKey.currentContext?.findRenderObject() as RenderBox?;
+    _inputKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox != null) {
       context
           .read<ChatInputHeightNotifier>()
