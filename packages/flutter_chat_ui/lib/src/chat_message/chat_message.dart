@@ -12,8 +12,6 @@ class ChatMessage extends StatelessWidget {
   final Alignment receivedMessageScaleAnimationAlignment;
   final AlignmentGeometry sentMessageAlignment;
   final AlignmentGeometry receivedMessageAlignment;
-  final Alignment? scaleAnimationAlignment;
-  final AlignmentGeometry? alignment;
   final EdgeInsetsGeometry padding;
 
   const ChatMessage({
@@ -25,8 +23,6 @@ class ChatMessage extends StatelessWidget {
     this.receivedMessageScaleAnimationAlignment = Alignment.centerLeft,
     this.sentMessageAlignment = AlignmentDirectional.centerEnd,
     this.receivedMessageAlignment = AlignmentDirectional.centerStart,
-    this.scaleAnimationAlignment,
-    this.alignment,
     this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
   });
 
@@ -48,15 +44,12 @@ class ChatMessage extends StatelessWidget {
           sizeFactor: curvedAnimation,
           child: ScaleTransition(
             scale: curvedAnimation,
-            alignment: scaleAnimationAlignment ??
-                (isSentByMe
-                    ? sentMessageScaleAnimationAlignment
-                    : receivedMessageScaleAnimationAlignment),
+            alignment: isSentByMe
+                ? sentMessageScaleAnimationAlignment
+                : receivedMessageScaleAnimationAlignment,
             child: Align(
-              alignment: alignment ??
-                  (isSentByMe
-                      ? sentMessageAlignment
-                      : receivedMessageAlignment),
+              alignment:
+                  isSentByMe ? sentMessageAlignment : receivedMessageAlignment,
               child: Padding(
                 padding: padding,
                 child: child,

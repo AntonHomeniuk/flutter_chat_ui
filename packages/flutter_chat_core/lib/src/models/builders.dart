@@ -7,7 +7,6 @@ part 'builders.freezed.dart';
 
 typedef TextMessageBuilder = Widget Function(BuildContext, TextMessage);
 typedef ImageMessageBuilder = Widget Function(BuildContext, ImageMessage);
-typedef CustomMessageBuilder = Widget Function(BuildContext, CustomMessage);
 typedef UnsupportedMessageBuilder = Widget Function(
   BuildContext,
   UnsupportedMessage,
@@ -35,7 +34,6 @@ class Builders with _$Builders {
   const factory Builders({
     TextMessageBuilder? textMessageBuilder,
     ImageMessageBuilder? imageMessageBuilder,
-    CustomMessageBuilder? customMessageBuilder,
     UnsupportedMessageBuilder? unsupportedMessageBuilder,
     InputBuilder? inputBuilder,
     ChatMessageBuilder? chatMessageBuilder,
